@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/html/register.html">Register</a>
+            <a href="/html/login.html">Login</a>
+            <a href="/html/portfolio.html">Portfolio</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="register-section">
+            <h1>Register</h1>
+            <form id="register-form">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required />
+
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required />
+
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" name="firstName" required />
+
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" name="lastName" required />
+
+                <label for="age">Age</label>
+                <input type="number" id="age" name="age" required />
+
+                <label for="gender">Gender</label>
+                <select id="gender" name="gender" required>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <button type="submit">Register</button>
+            </form>
+            <p id="register-message"></p>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2024 Portfolio Platform</p>
+    </footer>
+
+    <script src="/js/register.js"></script>
+</body>
+</html>

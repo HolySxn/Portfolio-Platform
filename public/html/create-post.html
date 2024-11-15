@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Post</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/html/register.html">Register</a>
+            <a href="/html/login.html">Login</a>
+            <a href="/html/portfolio.html">Portfolio</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="create-post-section">
+            <h1>Create a New Post</h1>
+            <form id="create-post-form" enctype="multipart/form-data">
+                <label for="title">Title</label>
+                <input type="text" id="title" name="title" required />
+            
+                <label for="description">Description</label>
+                <textarea id="description" name="description" required></textarea>
+            
+                <label for="images">Upload Images (Max 3)</label>
+                <input type="file" id="images" name="images" accept="image/*" multiple />
+            
+                <label for="externalImageUrl">Or Provide External Image URLs (Comma-Separated)</label>
+                <input type="text" id="externalImageUrl" name="externalImageUrl" placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg" />
+            
+                <button type="submit">Submit</button>
+            </form>
+            
+            <p id="create-post-message"></p>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2024 Portfolio Platform</p>
+    </footer>
+
+    <script src="/js/create-post.js"></script>
+</body>
+</html>
