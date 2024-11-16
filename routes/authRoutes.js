@@ -1,7 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const path = require('path');
-const { registerUser, loginUser, enable2FA, disable2FA } = require('../controllers/authController');
+const { registerUser, loginUser, enable2FA, disable2FA, check2FAStatus, getUserDetails } = require('../controllers/authController');
 
 const router = express.Router();
 
@@ -24,7 +24,16 @@ router.get('/logout', (req, res) => {
 // API Routes
 router.post('/register', registerUser);
 router.post('/login', loginUser);
-router.post('/2fa/setup', passport.authenticate('jwt', { session: false }), enable2FA);
+// 2FA status
+router.get('/2fa/status', passport.authenticate('jwt', { session: false }), check2FAStatus);
+
+// Enable 2FA
+router.post('/2fa/enable', passport.authenticate('jwt', { session: false }), enable2FA);
+
+// Disable 2FA
 router.post('/2fa/disable', passport.authenticate('jwt', { session: false }), disable2FA);
+
+router.get('/user', passport.authenticate('jwt', { session: false }), getUserDetails);
+
 
 module.exports = router;

@@ -25,17 +25,39 @@ exports.registerUser = async (req, res) => {
     }
 };
 
+
+
 exports.loginUser = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, twoFactorCode } = req.body; // Include the 2FA code from the client
 
     if (!email || !password) {
-        return res.status(400).json({ error: 'Email and password are required.' }); // Ensure early return
+        return res.status(400).json({ error: 'Email and password are required.' });
     }
 
     try {
+        // Check if the user exists and verify the password
         const user = await User.findOne({ email });
         if (!user || !(await user.comparePassword(password))) {
-            return res.status(401).json({ error: 'Invalid credentials.' }); // Ensure early return
+            return res.status(401).json({ error: 'Invalid credentials.' });
+        }
+
+        // Check if the user has 2FA enabled
+        if (user.twoFactorSecret) {
+            if (!twoFactorCode) {
+                // Inform the frontend that 2FA is required
+                return res.status(200).json({ twoFactorRequired: true });
+            }
+
+            // Verify the provided 2FA code
+            const is2FAValid = speakeasy.totp.verify({
+                secret: user.twoFactorSecret,
+                encoding: 'base32',
+                token: twoFactorCode,
+            });
+
+            if (!is2FAValid) {
+                return res.status(401).json({ error: 'Invalid 2FA code.' });
+            }
         }
 
         // Generate JWT token
@@ -47,10 +69,10 @@ exports.loginUser = async (req, res) => {
 
         // Set token in a secure HTTP-only cookie
         res.cookie('jwt', token, { httpOnly: true, secure: false }); // Set `secure: true` in production
-        return res.status(200).json({ message: 'Login successful.', token }); // Final response
+        return res.status(200).json({ message: 'Login successful.', token });
     } catch (error) {
         console.error('Error during login:', error);
-        return res.status(500).json({ error: 'Internal server error.' }); // Ensure early return
+        return res.status(500).json({ error: 'Internal server error.' });
     }
 };
 
@@ -98,5 +120,46 @@ exports.disable2FA = async (req, res) => {
         res.status(500).json({
             error: 'Error disabling 2FA.'
         });
+    }
+};
+
+exports.check2FAStatus = async (req, res) => {
+    const { user } = req;
+
+    try {
+        const is2FAEnabled = !!user.twoFactorSecret; // Check if 2FA secret exists
+        res.status(200).json({ twoFactorEnabled: is2FAEnabled });
+    } catch (error) {
+        console.error('Error checking 2FA status:', error);
+        res.status(500).json({ error: 'Error checking 2FA status.' });
+    }
+};
+
+exports.getUserDetails = async (req, res) => {
+    try {
+        // Ensure the user is authenticated
+        if (!req.user) {
+            return res.status(401).json({ error: 'Not authenticated.' });
+        }
+
+        // Find the user in the database
+        const user = await User.findById(req.user._id).select('-password'); // Exclude password from the response
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found.' });
+        }
+
+        res.json({
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            age: user.age,
+            gender: user.gender,
+            role: user.role,
+            createdAt: user.createdAt,
+        });
+    } catch (error) {
+        console.error('Error fetching user details:', error);
+        res.status(500).json({ error: 'Error fetching user details.' });
     }
 };

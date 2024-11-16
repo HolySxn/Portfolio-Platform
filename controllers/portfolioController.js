@@ -103,18 +103,24 @@ exports.updatePostBinary = async (req, res) => {
 };
 
 
-// Delete a portfolio post
 exports.deletePost = async (req, res) => {
+    const { id } = req.params;
+
     try {
-        const post = await Portfolio.findOneAndDelete({ _id: req.params.id, userId: req.user._id });
+        // Ensure only admins can delete posts
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ error: 'You are not authorized to delete posts.' });
+        }
+
+        const post = await Portfolio.findByIdAndDelete(id);
 
         if (!post) {
             return res.status(404).json({ error: 'Post not found.' });
         }
 
-        res.json({ message: 'Post deleted successfully.' });
+        res.status(200).json({ message: 'Post deleted successfully.' });
     } catch (error) {
-        console.error('Error deleting portfolio post:', error);
+        console.error('Error deleting post:', error);
         res.status(500).json({ error: 'Error deleting post.' });
     }
 };
@@ -139,3 +145,4 @@ exports.getPostImages = async (req, res) => {
         res.status(500).json({ error: 'Error fetching images.' });
     }
 };
+

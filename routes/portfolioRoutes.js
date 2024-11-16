@@ -29,6 +29,6 @@ router.post('/create', protect, authorize('editor', 'admin'), createPostBinary);
 router.put('/:id', protect, authorize('editor', 'admin'), updatePostBinary);
 
 // Delete a portfolio post
-router.delete('/:id', protect, authorize('admin'), deletePost);
+router.delete('/:id', protect, deletePost);
 
 module.exports = router;
