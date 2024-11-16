@@ -14,10 +14,12 @@ const portfolioSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    images: {
-        type: [String], // Array of image paths
-        required: true,
-    },
+    images: [
+        {
+            data: Buffer,
+            contentType: String,
+        }
+    ],
     createdAt: {
         type: Date,
         default: Date.now,

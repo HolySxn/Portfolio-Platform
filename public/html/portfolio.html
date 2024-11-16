@@ -3,24 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio</title>
+    <title>Your Portfolio</title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
     <header>
         <nav>
-            <a href="/">Home</a>
-            <a href="/html/register.html">Register</a>
-            <a href="/html/login.html">Login</a>
-            <a href="/html/portfolio.html">Portfolio</a>
+            <p>Welcome!</p>
+            <button id="create-post-button">Create New Post</button>
+            <button id="logout-button">Logout</button>
         </nav>
     </header>
 
     <main>
         <section class="portfolio-section">
             <h1>Your Portfolio</h1>
-            <div id="portfolio-posts"></div>
-            <button id="create-post-button">Create New Post</button>
+            <div id="portfolio-posts" class="portfolio-posts-container">
+                <p>Loading your posts...</p>
+            </div>
         </section>
     </main>
 

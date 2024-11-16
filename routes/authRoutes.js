@@ -15,6 +15,12 @@ router.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/html/login.html'));
 });
 
+// Logout route
+router.get('/logout', (req, res) => {
+    res.clearCookie('jwt'); // Clear the JWT cookie
+    res.status(200).json({ message: 'Logged out successfully.' });
+});
+
 // API Routes
 router.post('/register', registerUser);
 router.post('/login', loginUser);

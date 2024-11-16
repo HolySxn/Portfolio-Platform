@@ -1,10 +1,21 @@
-body {
+/* Global Styles */
+html, body {
     font-family: Arial, sans-serif;
+    height: 100%;
     margin: 0;
     padding: 0;
     line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
+/* Beautiful Background: Gradient */
+body {
+    background: linear-gradient(to right, #00c6ff, #0072ff); /* Gradient background */
+}
+
+/* Header Styles */
 header {
     background: #333;
     color: #fff;
@@ -21,10 +32,14 @@ header nav a:hover {
     text-decoration: underline;
 }
 
+/* Main Content Area */
 main {
     padding: 20px;
+    flex-grow: 1;
+    justify-content: center;
 }
 
+/* Footer Styles */
 footer {
     background: #333;
     color: #fff;
@@ -32,41 +47,181 @@ footer {
     padding: 10px;
 }
 
-.register-section {
+/* Apply Blur and Animation to Register, Login, and Create Post Forms */
+.register-section, .login-section, #create-post-section {
     max-width: 400px;
-    margin: 0 auto;
-    text-align: left;
+    margin: 50px auto; /* Centers the form with space from the top */
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Optional: shadow for depth */
+    animation: transferForm 1s ease-out forwards, fadeIn 1s ease-out forwards;
 }
 
-.register-section form {
+/* Keyframes for transferring (moving) the form */
+@keyframes transferForm {
+    0% {
+        transform: translateY(-50px); /* Start from above */
+        opacity: 0;
+    }
+    50% {
+        transform: translateY(0px); /* Move to the normal position */
+        opacity: 0.5;
+    }
+    100% {
+        transform: translateY(0px); /* Stay in the normal position */
+        opacity: 1;
+    }
+}
+
+/* Keyframes for fading in the form */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Remove the blur effect after animation */
+.register-section.loaded, .login-section.loaded, #create-post-section.loaded {
+    filter: blur(0); /* Remove blur after animation */
+}
+
+/* Style the form labels and inputs */
+.register-section form, .login-section form, #create-post-form {
     display: flex;
     flex-direction: column;
 }
 
-.register-section form label {
+.register-section form label, .login-section form label, #create-post-form label {
     margin-bottom: 5px;
 }
 
 .register-section form input,
 .register-section form select,
-.register-section form button {
+.login-section form input,
+#create-post-form input,
+#create-post-form textarea {
     margin-bottom: 15px;
     padding: 10px;
     font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px; /* Rounded corners for inputs */
 }
 
-.register-section form button {
+/* Style the submit buttons */
+.register-section form button,
+.login-section form button,
+#create-post-form button {
+    padding: 10px;
     background-color: #333;
     color: #fff;
     border: none;
     cursor: pointer;
+    font-size: 1rem;
+    border-radius: 4px;
 }
 
-.register-section form button:hover {
+.register-section form button:hover,
+.login-section form button:hover,
+#create-post-form button:hover {
     background-color: #555;
 }
 
-#register-message {
+/* Error Message Styling */
+#register-message, #login-message, #create-post-message {
     text-align: center;
+    color: red;
+}
+
+/* Portfolio Post Image Styling */
+.portfolio-post img {
+    margin: auto;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    margin: 5px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.portfolio-post {
+    text-align: center;
+    margin: auto;
+    width: 500px;
+    border: 1px solid #ddd;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #ffffff;
+}
+
+/* Responsive Media Query (Optional) */
+@media screen and (max-width: 768px) {
+    .register-section, .login-section, #create-post-section {
+        margin: 20px auto;
+        padding: 15px;
+    }
+
+    .register-section form input,
+    .register-section form select,
+    .login-section form input,
+    #create-post-form input,
+    #create-post-form textarea {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+}
+
+/* Create Post Section Styling */
+#create-post-section {
+    max-width: 400px;
+    margin: 50px auto; /* Centers the form with space from the top */
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Optional: shadow for depth */
+    animation: transferForm 1s ease-out forwards, fadeIn 1s ease-out forwards;
+}
+
+#create-post-form {
+    display: flex;
+    flex-direction: column;
+}
+
+#create-post-form label {
+    margin-bottom: 5px;
+}
+
+#create-post-form input,
+#create-post-form textarea {
+    margin-bottom: 15px;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px; /* Optional: rounded corners for inputs */
+}
+
+#create-post-form button {
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    border-radius: 4px;
+}
+
+#create-post-form button:hover {
+    background-color: #555;
+}
+
+/* Error/Success Message Styling */
+#create-post-message {
+    text-align: center;
+    margin-top: 10px;
     color: red;
 }

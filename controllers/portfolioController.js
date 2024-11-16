@@ -3,8 +3,18 @@ const Portfolio = require('../models/Portfolio');
 // Get all posts for the logged-in user
 exports.getUserPosts = async (req, res) => {
     try {
-        const posts = await Portfolio.find({ userId: req.user._id }).sort({ createdAt: -1 });
-        res.json(posts);
+        const posts = await Portfolio.find({ userId: req.user._id });
+
+        // Convert image data to Base64 for rendering
+        const postsWithImages = posts.map((post) => ({
+            ...post._doc,
+            images: post.images.map((img) => ({
+                data: img.data.toString('base64'),
+                contentType: img.contentType,
+            })),
+        }));
+
+        res.json(postsWithImages);
     } catch (error) {
         console.error('Error fetching user posts:', error);
         res.status(500).json({ error: 'Error fetching posts.' });
@@ -28,42 +38,44 @@ exports.getPostById = async (req, res) => {
 };
 
 // Create a new portfolio post
-exports.createPost = async (req, res) => {
-    const { title, description, externalImageUrl } = req.body;
+exports.createPostBinary = async (req, res) => {
+    const { title, description, images } = req.body;
+
+    if (!title || !description || !images) {
+        return res.status(400).json({ error: 'Title, description, and images are required.' });
+    }
 
     try {
-        // Process uploaded files
-        const uploadedImagePaths = req.files
-            ? req.files.map((file) => `/uploads/${file.filename}`)
-            : [];
-
-        // Process external image URLs
-        const externalImagePaths = externalImageUrl
-            ? externalImageUrl.split(',').map((url) => url.trim())
-            : [];
-
-        // Combine all image paths
-        const allImagePaths = [...uploadedImagePaths, ...externalImagePaths];
+        // Convert Base64-encoded image data to Buffer
+        const processedImages = images.map((img) => ({
+            data: Buffer.from(img.data, 'base64'),
+            contentType: img.contentType,
+        }));
 
         const newPost = new Portfolio({
             userId: req.user._id,
             title,
             description,
-            images: allImagePaths,
+            images: processedImages,
         });
 
         await newPost.save();
-        res.status(201).json({ message: 'Portfolio post created successfully.', post: newPost });
+        res.status(201).json({ message: "Portfolio post created successfully.", post: newPost });
     } catch (error) {
-        console.error('Error creating portfolio post:', error);
-        res.status(500).json({ error: 'Error creating post.' });
+        console.error("Error creating portfolio post:", error);
+        res.status(500).json({ error: "Error creating post." });
     }
 };
 
 
+
 // Update an existing portfolio post
-exports.updatePost = async (req, res) => {
-    const { title, description } = req.body;
+exports.updatePostBinary = async (req, res) => {
+    const { title, description, images } = req.body;
+
+    if (!title || !description || !images) {
+        return res.status(400).json({ error: 'Title, description, and images are required.' });
+    }
 
     try {
         const post = await Portfolio.findOne({ _id: req.params.id, userId: req.user._id });
@@ -72,22 +84,24 @@ exports.updatePost = async (req, res) => {
             return res.status(404).json({ error: 'Post not found.' });
         }
 
-        const updatedFields = { title, description };
+        // Convert Base64-encoded image data to Buffer
+        const processedImages = images.map((img) => ({
+            data: Buffer.from(img.data, 'base64'),
+            contentType: img.contentType,
+        }));
 
-        if (req.files && req.files.length > 0) {
-            updatedFields.images = req.files.map((file) => `/uploads/${file.filename}`);
-        }
+        post.title = title;
+        post.description = description;
+        post.images = processedImages;
 
-        const updatedPost = await Portfolio.findByIdAndUpdate(req.params.id, updatedFields, {
-            new: true,
-        });
-
-        res.json({ message: 'Post updated successfully.', post: updatedPost });
+        await post.save();
+        res.json({ message: 'Post updated successfully.', post });
     } catch (error) {
         console.error('Error updating portfolio post:', error);
         res.status(500).json({ error: 'Error updating post.' });
     }
 };
+
 
 // Delete a portfolio post
 exports.deletePost = async (req, res) => {
@@ -102,5 +116,26 @@ exports.deletePost = async (req, res) => {
     } catch (error) {
         console.error('Error deleting portfolio post:', error);
         res.status(500).json({ error: 'Error deleting post.' });
+    }
+};
+
+exports.getPostImages = async (req, res) => {
+    try {
+        const post = await Portfolio.findById(req.params.id);
+
+        if (!post) {
+            return res.status(404).json({ error: 'Post not found.' });
+        }
+
+        // Serve images as Base64
+        const images = post.images.map((img) => ({
+            data: img.data.toString('base64'),
+            contentType: img.contentType,
+        }));
+
+        res.json({ images });
+    } catch (error) {
+        console.error('Error fetching post images:', error);
+        res.status(500).json({ error: 'Error fetching images.' });
     }
 };
